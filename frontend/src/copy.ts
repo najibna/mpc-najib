@@ -12,6 +12,7 @@ export const NAV = [
   { label: "Trends", to: "/insights" },
   { label: "Cards", to: "/employees" },
   { label: "Activity", to: "/audit" },
+  { label: "Architecture", to: "/architecture" },
 ] as const;
 
 export const PAGES = {

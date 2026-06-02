@@ -1,4 +1,4 @@
-package com.mpcnajib.intact.web;
+package com.mpcnajib.intact.controller;
 
 import com.mpcnajib.intact.service.AnalyticsService;
 import com.mpcnajib.intact.service.ApprovalsService;

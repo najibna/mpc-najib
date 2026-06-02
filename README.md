@@ -1,82 +1,129 @@
-# 🧾 Intact Receipt Manager
+# Intact Receipt Manager
 
-**MPC Hacks × Intact Insurance** 🏢
+**MPC Hacks × Intact Insurance** — corporate card expense demo with rule checks, approvals, Ask AI, and an intern-ready backend stack.
 
-Upload Excel card charges → get a live dashboard 📊  
-Ask AI questions 💬 · catch broken rules ⚠️ · review spend ✅ · export reports 📤  
+> Upload Excel → Spring Boot API → MongoDB + RabbitMQ → React dashboard
 
-Demo data loads when you open the app — no setup needed 🚀
-
-> **Rules find problems. AI explains them. You decide.** 🎯  
-> Math = Java ☕️ · Answers = Gemini ✨ · No fake numbers ❌
+**Live:** https://mpc-najib.onrender.com · **API:** https://mpc-najib-api.onrender.com
 
 ---
 
-## 🌐 Try it now
+## What this demonstrates (backend / generalist intern)
 
-- **App:** https://mpc-najib.onrender.com  
-- **Code:** https://github.com/najibna/mpc-najib  
-
-**Ask AI examples:**  
-💳 *Who spent the most?* · 🧾 *Which charges have no receipt?* · 🏪 *Which stores cost the most?*
-
----
-
-## ✅ 4 main features
-
-| # | What | How it works |
-| --- | --- | --- |
-| 1️⃣ | **Ask AI** 🗣️ | Type a question → get a chart + plain answer |
-| 2️⃣ | **Rule checks** 📋 | Flags bad charges (no receipt, over $50, splits, etc.) |
-| 3️⃣ | **Spend review** 👀 | Approve or deny flagged charges + AI tip |
-| 4️⃣ | **Reports** 📊 | Auto groups trips · export CSV/JSON |
+| Skill area | How it shows up in this repo |
+|------------|------------------------------|
+| **Java** | Java 21, layered services, domain models |
+| **Spring Boot** | REST controllers, validation, auto-configuration |
+| **Maven** | `pom.xml`, `mvn test`, `mvn package` |
+| **Git** | Feature branches, clean history, `.gitattributes` |
+| **MongoDB** | Spring Data repositories for transactions, violations, reviews, reports |
+| **RabbitMQ** | Async `transactions.uploaded` → policy scan → domain events |
+| **Docker** | `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml` |
+| **Kubernetes** | Sample manifests in `/k8s` (deployments + services) |
+| **AWS-ready** | Containerized API/UI, stateless API, external data + messaging |
+| **React + TypeScript** | Vite SPA, typed API client, demo fallbacks |
+| **APIs** | REST: `/api/transactions`, `/api/reviews`, `/api/reports`, `/api/health` |
+| **Microservices-style** | API + worker flow via message broker (single repo, demo-friendly) |
 
 ---
 
-## 🎁 Extra goodies
+## Architecture
 
-- 🔍 Fraud & risk scores  
-- 📈 Monthly spend forecast  
-- 🏪 Top stores & duplicate charges  
-- 💳 Spend by card  
-- 🎨 Intact-style UI (cream + red)
+```
+React (TypeScript)  →  Spring Boot API  →  MongoDB
+                              ↓
+                         RabbitMQ (async policy checks)
+```
+
+**Backend packages:** `controller` · `service` · `repository` · `model` · `dto` · `config` · `messaging`
+
+**Events:** `transactions.uploaded` · `policy.violation.detected` · `review.approved` · `review.denied` · `report.generated`
+
+Open **Architecture** in the app nav for a visual overview and tech badges.
 
 ---
 
-## 🛠️ Tech
+## Run locally
 
-React ⚛️ · Java Spring Boot ☕️ · Apache POI 📁 · Gemini AI ✨
+### Full stack (recommended)
 
----
+```bash
+docker compose up --build
+```
 
-## 💻 Run on your laptop
+- **UI:** http://localhost:3000  
+- **API:** http://localhost:8010  
+- **RabbitMQ management:** http://localhost:15672 (guest/guest)  
+- **MongoDB:** localhost:27017  
 
-**API (Java only — Spring Boot)** ☕️
+Set `OPENROUTER_API_KEY` in the environment or a `.env` file for Ask AI.
+
+### API only
+
 ```bash
 cd backend
+cp .env.example .env   # edit Mongo/Rabbit URLs if needed
 mvn spring-boot:run
 ```
 
-**Website**
+Requires MongoDB and RabbitMQ running (or use `docker compose up mongodb rabbitmq`).
+
+### Frontend only
+
 ```bash
 cd frontend && npm install && npm run dev
 ```
 
-Open **http://localhost:5180** 🌐
+`frontend/.env`:
 
-Set `frontend/.env`:
 ```bash
 VITE_API_BASE_URL=http://127.0.0.1:8010
 ```
 
-Optional: copy `backend/.env.example` to `backend/.env` and set `OPENROUTER_API_KEY` for Ask AI.
+---
+
+## API endpoints (new)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/health` | Health + MongoDB/RabbitMQ status |
+| GET | `/api/transactions` | List stored transactions |
+| POST | `/api/transactions/upload` | Upload Excel (async policy check) |
+| GET | `/api/transactions/risky` | High risk-score transactions |
+| POST | `/api/reviews/{id}/approve` | Approve a violation review |
+| POST | `/api/reviews/{id}/deny` | Deny a violation review |
+| GET | `/api/reports/summary` | Latest expense summary report |
+
+Existing demo UI still uses `/api/smb/*` (unchanged).
 
 ---
 
-## ☁️ Hosted on Render
+## Tests
 
-Frontend + API in `render.yaml` · add `OPENROUTER_API_KEY` for Ask AI 🔑
+```bash
+cd backend && mvn test
+cd frontend && npm run build
+```
 
 ---
 
-Built for **MPC Hacks** 💪 · **Intact** look & feel ❤️ · ~4,180 sample charges in the demo 📦
+## Kubernetes (sample)
+
+```bash
+kubectl apply -f k8s/mongodb.yaml
+kubectl apply -f k8s/rabbitmq.yaml
+kubectl apply -f k8s/backend.yaml
+kubectl apply -f k8s/frontend.yaml
+```
+
+Build and tag images locally (`intact-backend:latest`, `intact-frontend:latest`) before applying.
+
+---
+
+## Hosted on Render
+
+See `render.yaml` for the production static site + Java API. Add `OPENROUTER_API_KEY` on the API service.
+
+---
+
+Built for **MPC Hacks** · Intact-style UI · ~4,180 sample charges in the demo

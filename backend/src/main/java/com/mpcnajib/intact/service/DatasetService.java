@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,17 @@ import org.springframework.stereotype.Service;
 public class DatasetService {
   private final ExcelLoaderService excelLoader;
   private final SessionStore store;
+  private final ObjectProvider<TransactionPersistenceService> persistence;
   private volatile DatasetSnapshot dataset;
 
-  public DatasetService(ExcelLoaderService excelLoader, SessionStore store) {
+  public DatasetService(
+      ExcelLoaderService excelLoader,
+      SessionStore store,
+      ObjectProvider<TransactionPersistenceService> persistence
+  ) {
     this.excelLoader = excelLoader;
     this.store = store;
+    this.persistence = persistence;
   }
 
   public boolean isLoaded() {
@@ -34,6 +41,16 @@ public class DatasetService {
 
   public DatasetSnapshot getOrNull() {
     return dataset;
+  }
+
+  /** Test helper: load in-memory data without Mongo/Rabbit side effects. */
+  public void loadTestSnapshot(List<Transaction> txns) {
+    normalize(txns);
+    this.dataset = new DatasetSnapshot(txns, "test", Map.of(
+        "has_receipt_column", true,
+        "has_approval_column", true,
+        "has_business_purpose_column", true
+    ));
   }
 
   public void loadFromBytes(byte[] content, String filename) throws IOException {
@@ -73,6 +90,7 @@ public class DatasetService {
     store.importMeta = meta;
     store.logAudit("data.imported", "Finance Admin", filename, Map.of("rows", txns.size()));
     CacheCoordinator.invalidateAll();
+    persistence.ifAvailable(p -> p.replaceAll(txns));
   }
 
   private static Map<String, String> dateRangeMap(List<Transaction> txns) {

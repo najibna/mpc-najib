@@ -8,10 +8,19 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 25MB
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/intact}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
 
 app:
   openrouter-api-key: ${OPENROUTER_API_KEY:}
   openrouter-model: ${OPENROUTER_MODEL:google/gemini-2.5-flash}
   openrouter-base-url: ${OPENROUTER_BASE_URL:https://openrouter.ai/api/v1/chat/completions}
-  frontend-origins: ${FRONTEND_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:5180,http://localhost:5181}
+  frontend-origins: ${FRONTEND_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:5180,http://localhost:5181,http://localhost:3000}
   sample-data-path: classpath:sample_data/dummy_data.xlsx
+  messaging-enabled: ${MESSAGING_ENABLED:true}

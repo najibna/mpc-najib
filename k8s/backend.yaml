@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: intact-backend
+spec:
+  selector:
+    app: intact-backend
+  ports:
+    - port: 8010
+      targetPort: 8010
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intact-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intact-backend
+  template:
+    metadata:
+      labels:
+        app: intact-backend
+    spec:
+      containers:
+        - name: backend
+          image: intact-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8010
+          env:
+            - name: MONGODB_URI
+              value: mongodb://mongodb:27017/intact
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: FRONTEND_ORIGINS
+              value: http://localhost:3000

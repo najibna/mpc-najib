@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useState, type ComponentType } from "react";
 import { matchPath, useLocation } from "react-router-dom";
+import ArchitecturePage from "../pages/ArchitecturePage";
 import AuditPage from "../pages/AuditPage";
 import ApprovalsPage from "../pages/ApprovalsPage";
 import AskPage from "../pages/AskPage";
@@ -20,6 +21,7 @@ const ROUTES: RouteDef[] = [
   { path: "/insights", Component: InsightsPage },
   { path: "/employees", Component: EmployeesPage },
   { path: "/audit", Component: AuditPage },
+  { path: "/architecture", Component: ArchitecturePage },
 ];
 
 const HOME_KEY = "/#end";

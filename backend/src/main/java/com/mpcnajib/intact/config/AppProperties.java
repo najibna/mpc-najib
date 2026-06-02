@@ -8,7 +8,8 @@ public record AppProperties(
     String openrouterModel,
     String openrouterBaseUrl,
     String frontendOrigins,
-    String sampleDataPath
+    String sampleDataPath,
+    boolean messagingEnabled
 ) {
   public boolean llmEnabled() {
     return openrouterApiKey != null && !openrouterApiKey.isBlank();
