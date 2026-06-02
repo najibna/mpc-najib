@@ -1,5 +1,16 @@
-# No Python in this repo; exclude large generated demo payloads from language %.
+# GitHub language stats: Java backend + TypeScript/React frontend (no Python).
 *.py linguist-detectable=false
+
+# Explicitly count frontend source (fixes stale "100% Java" bar on github.com).
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
+*.css linguist-detectable=true
+frontend/** linguist-vendored=false
+
+# Exclude binaries and generated demo payloads.
+*.xlsx linguist-vendored=true
+*.png linguist-vendored=true
+*.svg linguist-vendored=true
+frontend/package-lock.json linguist-generated=true
 frontend/src/data/demoBundle.json linguist-generated=true
 frontend/src/data/demoHome.json linguist-generated=true
-frontend/package-lock.json linguist-generated=true
