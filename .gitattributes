@@ -1,0 +1,5 @@
+# No Python in this repo; exclude large generated demo payloads from language %.
+*.py linguist-detectable=false
+frontend/src/data/demoBundle.json linguist-generated=true
+frontend/src/data/demoHome.json linguist-generated=true
+frontend/package-lock.json linguist-generated=true

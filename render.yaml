@@ -1,0 +1,29 @@
+# One-click deploy: https://render.com/deploy
+# Java-only backend (no Python). Frontend is static React.
+
+services:
+  - type: web
+    name: mpc-najib-api
+    runtime: java
+    rootDir: backend
+    plan: free
+    buildCommand: mvn -DskipTests package
+    startCommand: java -jar target/intact-receipt-manager-api-1.0.0.jar
+    healthCheckPath: /api/health
+    envVars:
+      - key: JAVA_VERSION
+        value: "21"
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: FRONTEND_ORIGINS
+        value: https://mpc-najib.onrender.com
+
+  - type: web
+    name: mpc-najib
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://mpc-najib-api.onrender.com
